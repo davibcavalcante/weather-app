@@ -51,7 +51,7 @@ btnLocation.addEventListener('click', (e) => {
                     inputLocation.focus()
                     break
 
-                case 'Broken Clouds': imgTemp.style.backgroundImage = "url('imagens/sun-and-rain.png')"
+                case 'Thunderstorm': imgTemp.style.backgroundImage = "url('imagens/sun-and-rain.png')"
                     tempLocation.innerText = weatherLocation
                     tempInformation.innerHTML = `${tempFormatted}<sup>°c<sup>`
                     humidityParagraph.innerHTML = `${humidity}% </br> Humidity`
