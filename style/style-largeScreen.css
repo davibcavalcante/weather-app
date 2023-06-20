@@ -1,5 +1,6 @@
 body {
     background: url(../imagens/bg.jpg) no-repeat fixed center center;
+    background-size: cover;
     margin: 0;
     align-items: center;
 }
