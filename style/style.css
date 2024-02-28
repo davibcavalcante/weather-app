@@ -2,10 +2,9 @@
 
 :root {
     --main-font: 'Inter';
-    --dark-blue: #0d1c52;
-    --light-blue: #7593FF;
-    --blue: #2959FF;
-    --alternative-blue: #1a379e;
+    --main-color: #2959FF;
+    --dark-main-color: #0d1c52;
+    --alternative-color: #1a379e;
 }
 
 * {
@@ -15,21 +14,38 @@
 }
 
 body {
-    background-color: var(--light-blue);
     font-family: var(--main-font);
-    height: 97vh;
-    margin-top: 20px;
+    min-height: 100vh;
+
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-attachment: fixed;
+    background-size: cover;
 
     display: flex;
     justify-content: center;
-    align-items: start;
+    align-items: center;
 }
 
-.hide {display: none;}
+body.morning {
+    background-image: url(../imagens/morning-bg.jpg);
+}
+
+body.afternoon {
+    background-image: url(../imagens/afternoon-bg.jpg);
+}
+
+body.night {
+    background-image: url(../imagens/night-bg.jpg);
+}
+
+.hidden {display: none;}
 
 .container {
     background-color: #FFFFFF;
-    width: 380px;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 15px;
     border-radius: 20px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.534);
     padding: 10px;
@@ -39,83 +55,97 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 10px;
 }
 
 .toolbar > i{
-    color: var(--dark-blue);
+    color: var(--dark-main-color);
     font-size: 2.5em;
     text-shadow: 0px 0px 3px rgba(0, 0, 0, 0.322);
 }
 
 .toolbar form {
-    width: 88%;
+    flex: 1;
 
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    gap: 5px;
 }
 
 .toolbar input {
-    color: var(--dark-blue);
+    color: var(--dark-main-color);
     font-size: 1.3em;
     text-transform: uppercase;
     width: 85%;
     padding: 7px;
     outline: none;
-    border: 2px solid var(--dark-blue);
-    border-radius: 20px;
+    border: 2px solid var(--dark-main-color);
+    border-radius: 10px;
 }
 
 .toolbar button {
     color: #FFFFFF;
     font-size: 1.3em;
-    background-color: var(--dark-blue);
-    border: 2px solid var(--dark-blue);
+    background-color: var(--dark-main-color);
+    border: 2px solid var(--dark-main-color);
     border-radius: 50%;
-    width: 13%;
+
+    width: 42px;
+    height: 42px;
     cursor: pointer;
 }
 
-.toolbar button:hover {
-    color: var(--alternative-blue);
-    background-color: #FFFFFF;
-}
-
-.weather-img h1 {
+.weather-container h1 {
     text-align: center;
     font-size: 4em;
     font-weight: 600;
     letter-spacing: -0.09em;
 }
 
-.weather-img h2 {
+.weather-container h2 {
     text-align: center;
     text-transform: uppercase;
     font-weight: 500;
 }
 
-.not-found {
-    color: #000000;
+.image-container {
+    background-repeat: no-repeat;
+
+    width: 100%;
+    max-width: 250px;
+    height: 250px;
+    margin: 20px auto;
+}
+
+.error-container {
+    color: #000;
     font-size: 1.5em;
     font-weight: 500;
     text-align: center;
 }
 
-.information {
+.error-container img {
+    width: 100%;
+}
+
+.info-container {
     margin-bottom: 50px;
 }
 
-.description {
+.description-container {
     width: 100%;
     margin: 20px 0 0 0;
 
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
 }
 
 .humidity, .wind {
-    color: var(--dark-blue);
-    font-size: 1.2em;
+    color: var(--dark-main-color);
+    font-size: 1em;
     font-weight: 600;
 
     display: flex;
@@ -123,12 +153,37 @@ body {
 }
 
 .humidity i, .wind i {
-    font-size: 1.6em;
+    font-size: 1.3em;
     margin-right: 8px;
 }
 
-.img {
-    width: 250px;
-    height: 250px;
-    margin: 20px auto;
+.image-container.clouds {
+    background-image: url(../imagens/cloud.png);
+
+}
+.image-container.clear{
+    background-image: url(../imagens/clear.png);
+}
+
+.image-container.thunderstorm {
+    background-image: url(../imagens/thunderstorm.png);
+}
+
+.image-container.rain {
+    background-image: url(../imagens/rain.png);
+}
+
+.image-container.snow {
+    background-image: url(../imagens/snow.png);
+}
+
+@media screen and (min-width: 992px) {
+    .toolbar button:hover {
+        color: var(--alternative-color);
+        background-color: #FFFFFF;
+    }
+
+    .toolbar button:active {
+        transform: scale(.9);
+    }
 }
