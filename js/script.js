@@ -1,84 +1,112 @@
-const btnLocation = document.querySelector('#btn-location')
-const inputLocation = document.querySelector('#input-location')
+const showErrorMessage = () => {
+  const weatherContainer = document.querySelector('.weather-container');
+  weatherContainer.innerHTML = '';
 
-const notFoundError = document.querySelector('.not-found')
-const weather = document.querySelector('.weather-img')
-const imgTemp = document.querySelector('.img')
-const tempInformation = document.querySelector('.information h1')
-const tempLocation = document.querySelector('.information h2')
-const humidityParagraph = document.querySelector('.humidity p')
-const windParagraph = document.querySelector('.wind p')
+  const errorContainer = document.createElement('section')
+  errorContainer.classList.add('error-container')
+  errorContainer.innerHTML = `
+    <img src="imagens/not-found.png" alt="Image 404 Error">
+    <p>Oops! Invalid location :/</p>
+  `;
 
-btnLocation.addEventListener('click', (e) => {
-    e.preventDefault()
-    const accessKey = 'e2754291aa06d0db6b4d049c93516889'
-    const city = inputLocation.value
-    const lang = 'pt_br'
+  weatherContainer.appendChild(errorContainer)
+  weatherContainer.classList.remove('hidden');
+}
 
-    if (city === '') return
-    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${accessKey}&lang=${lang}`)
-    .then(response => response.json())
-    .then(json => {
-        if (json.cod >= 400) {
-            weather.classList.add('hide')
-            notFoundError.classList.remove('hide')
-            inputLocation.focus()
-        } else {
-            notFoundError.classList.add('hide')
-            weather.classList.remove('hide')
-    
-            const weatherLocation = json.weather[0].main
-            const temp = json.main.temp
-            const tempFormatted = temp.toFixed(0)
-            const windSpeed = json.wind.speed
-            const humidity = json.main.humidity
+const createChildElement = (data, parent, parentClass) => {
+  const parentElement = document.createElement(parent);
+  parentElement.classList.add(parentClass);
+  const weather = data.weather[0].main;
 
-            switch (weatherLocation) {
-                case 'Clouds': 
-                    imgTemp.style.backgroundImage = "url('imagens/cloud.png')"
-                    tempLocation.innerText = weatherLocation
-                    tempInformation.innerHTML = `${tempFormatted}<sup>°c<sup>`
-                    humidityParagraph.innerHTML = `${humidity}% </br> Humidity`
-                    windParagraph.innerHTML = `${windSpeed}Km/h </br> Wind Speed`
-                    inputLocation.focus()
-                    break
+  if (parentClass === 'image-container') {
+    const weatherClass = weather.toLowerCase();
+    parentElement.classList.add(weatherClass);
+  } else if (parentClass === 'info-container') {
+    const temp = data.main.temp.toFixed(0);
+    parentElement.innerHTML = `
+      <h1>${temp}<sup>°c<sup></h1>
+      <h2>${weather}</h2>
+    `;
+  } else if (parentClass === 'description-container') {
+    const humidityValue = data.main.humidity;
+    const windSpeed = data.wind.speed;
+    parentElement.innerHTML = `
+    <section class="humidity">
+      <i class="fa-sharp fa-solid fa-water"></i>
+      <p>${humidityValue}% </br> Humidity</p>
+    </section>
+    <section class="wind">
+      <i class="fa-sharp fa-solid fa-wind"></i>
+      <p>${windSpeed}Km/h </br> Wind Speed</p>
+    </section>
+    `;
+  }
 
-                case 'Clear': imgTemp.style.backgroundImage = "url('imagens/sun.png')"
-                    tempLocation.innerText = weatherLocation
-                    tempInformation.innerHTML = `${tempFormatted}<sup>°c<sup>`
-                    humidityParagraph.innerHTML = `${humidity}% </br> Humidity`
-                    windParagraph.innerHTML = `${windSpeed}Km/h </br> Wind Speed`
-                    inputLocation.focus()
-                    break
+  return parentElement;
+}
 
-                case 'Thunderstorm': imgTemp.style.backgroundImage = "url('imagens/sun-and-rain.png')"
-                    tempLocation.innerText = weatherLocation
-                    tempInformation.innerHTML = `${tempFormatted}<sup>°c<sup>`
-                    humidityParagraph.innerHTML = `${humidity}% </br> Humidity`
-                    windParagraph.innerHTML = `${windSpeed}Km/h </br> Wind Speed`
-                    inputLocation.focus()
-                    break
+const createElements = (data) => {
+  const weatherContainer = document.querySelector('.weather-container');
+  weatherContainer.innerHTML = '';
+  weatherContainer.classList.remove('hidden');
 
-                case 'Rain': imgTemp.style.backgroundImage = "url('imagens/rain.png')"
-                    tempLocation.innerText = weatherLocation
-                    tempInformation.innerHTML = `${tempFormatted}<sup>°c<sup>`
-                    humidityParagraph.innerHTML = `${humidity}% </br> Humidity`
-                    windParagraph.innerHTML = `${windSpeed}Km/h </br> Wind Speed`
-                    inputLocation.focus()
-                    break
+  weatherContainer.appendChild(createChildElement(data, 'section', 'image-container'));
+  weatherContainer.appendChild(createChildElement(data, 'section', 'info-container'));
+  weatherContainer.appendChild(createChildElement(data, 'section', 'description-container'));
+}
 
-                case 'Snow': imgTemp.style.backgroundImage = "url('imagens/snow.png')"
-                    tempLocation.innerText = weatherLocation
-                    tempInformation.innerHTML = `${tempFormatted}<sup>°c<sup>`
-                    humidityParagraph.innerHTML = `${humidity}% </br> Humidity`
-                    windParagraph.innerHTML = `${windSpeed}Km/h </br> Wind Speed`
-                    inputLocation.focus()
-                    break
-            }
+const getRequest = (location, apiKey, lang) => {
+  if (location.length > 0) {
+    return `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&appid=${apiKey}&lang=${lang}`;
+  } else {
+    return false;
+  }
+}
 
-        }
-    })
+const getApiData = async (e) => {
+  e.preventDefault();
+  const location = document.querySelector('#location-input').value;
+  const apiKey = 'e2754291aa06d0db6b4d049c93516889';
+  const lang = 'pt_br';
+
+  const req = getRequest(location, apiKey, lang);
+
+  if (!req) return;
+
+  const results = await fetch(req);
+  if (!results.ok) {
+    showErrorMessage();
+    return;
+  }
+
+  const data = await results.json();
+  createElements(data);
+}
+
+const setFormEvents = () => {
+    const form = document.querySelector('#form');
+
+    form.addEventListener('submit', getApiData);
+}
+
+const getHour = () => {
+  const data = new Date()
+  return data.getHours()
+}
+
+const setBodyEvents = (body) => {
+  const hour = getHour();
+  if (hour < 12 && hour >= 6) {
+    body.classList.add('morning');
+  } else if (hour < 18 && hour >= 12) {
+    body.classList.add('afternoon');
+  } else {
+    body.classList.add('night');
+  }
+}
+
+window.addEventListener('load', () => {
+  const body = document.querySelector('body')
+  setFormEvents();
+  setBodyEvents(body);
 })
-
-
-
